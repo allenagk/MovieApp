@@ -29,11 +29,12 @@ data class MovieDto(
     val voteCount: Int
 )
 
-fun MovieDto.toMovie() : Movie {
+fun MovieDto.toMovie(): Movie {
     return Movie(
         id = id,
         overview = overview,
         posterPath = posterPath,
-        title = title
+        title = title,
+        releaseDate = releaseDate
     )
 }

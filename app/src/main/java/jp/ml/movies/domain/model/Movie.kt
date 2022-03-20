@@ -6,4 +6,5 @@ data class Movie(
     val overview: String,
     val posterPath: String?,
     val title: String,
+    val releaseDate: String,
 )

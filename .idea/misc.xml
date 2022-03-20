@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/drawable/ic_baseline_broken_image_24.xml" value="0.295" />
         <entry key="app/src/main/res/drawable/ic_baseline_movie_filter_24.xml" value="0.1695" />
       </map>
     </option>
