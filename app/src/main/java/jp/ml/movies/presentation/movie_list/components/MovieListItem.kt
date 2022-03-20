@@ -39,7 +39,7 @@ fun MovieListItem(
             shape = RoundedCornerShape(15.dp),
             elevation = 5.dp
         ) {
-            Box(modifier = Modifier.height(200.dp)) {
+            Box(modifier = Modifier.height(250.dp)) {
                 SubcomposeAsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
                         .data("https://www.themoviedb.org/t/p/w1280${movie.posterPath}")
@@ -72,12 +72,19 @@ fun MovieListItem(
                     contentAlignment = Alignment.BottomStart
                 ) {
                     Column {
-                        Text(movie.title, style = TextStyle(color = Color.White, fontSize = 16.sp))
+                        movie.title?.let {
+                            Text(
+                                it,
+                                style = TextStyle(color = Color.White, fontSize = 16.sp)
+                            )
+                        }
                         Divider()
-                        Text(
-                            movie.releaseDate,
-                            style = TextStyle(color = Color.LightGray, fontSize = 14.sp)
-                        )
+                        movie.releaseDate?.let {
+                            Text(
+                                it,
+                                style = TextStyle(color = Color.LightGray, fontSize = 14.sp)
+                            )
+                        }
                     }
                 }
             }

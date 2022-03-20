@@ -44,12 +44,21 @@ data class MovieDetailDto(
     val voteCount: Int
 )
 
-fun MovieDetailDto.toMovieDetail() : MovieDetail {
+fun MovieDetailDto.toMovieDetail(): MovieDetail {
     return MovieDetail(
         movieId = id,
         overview = overview,
         posterPath = posterPath,
+        backDropPath = backdropPath,
         releaseDate = releaseDate,
-        title = title
+        title = title,
+        genres = genres.map { it.name },
+        runtime = runtime,
+        tagline = tagline,
+        voteAverage = voteAverage,
+        status = status,
+        originalLanguage = originalLanguage,
+        budget = budget,
+        revenue = revenue,
     )
 }
