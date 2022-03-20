@@ -4,14 +4,29 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.composable
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import dagger.hilt.android.AndroidEntryPoint
 import jp.ml.movies.presentation.movie_detail.MovieDetailScreen
 import jp.ml.movies.presentation.movie_list.MovieListScreen
@@ -23,6 +38,7 @@ class MainActivity : ComponentActivity() {
 
     private val viewModel: MovieListViewModel by viewModels()
 
+    @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -34,26 +50,131 @@ class MainActivity : ComponentActivity() {
         setContent {
             MoviesTheme {
                 // A surface container using the 'background' color from the theme
-                Surface(color = MaterialTheme.colors.background) {
-                    val navController = rememberNavController()
-                    NavHost(
-                        navController = navController,
-                        startDestination = Screen.MovieListScreen.route
-                    ) {
-                        composable(
-                            route = Screen.MovieListScreen.route
-                        ) {
-                            MovieListScreen(navController)
-                        }
-                        composable(
-                            route = Screen.MovieDetailScreen.route + "/{movieId}"
-                        ) {
-                            MovieDetailScreen()
-                        }
-                    }
+                val navController = rememberAnimatedNavController()
+
+                Scaffold(
+                    bottomBar = { BottomNavigationBar(navController) }
+                ) {
+                    Navigation(navController)
                 }
             }
         }
+    }
+}
+
+@Composable
+fun BottomNavigationBar(navController: NavController) {
+
+    val items = listOf(
+        Screen.MovieListScreen,
+        Screen.FavoriteScreen,
+    )
+
+    BottomNavigation(
+        backgroundColor = Color.White,
+        contentColor = Color.Black,
+    ) {
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = navBackStackEntry?.destination?.route
+
+        items.forEach { items ->
+            BottomNavigationItem(
+                icon = {
+                    items.icon?.let {
+                        Icon(
+                            imageVector = it,
+                            contentDescription = items.title
+                        )
+                    }
+                },
+                label = { Text(text = items.title) },
+                selectedContentColor = Color.Black,
+                unselectedContentColor = Color.Black.copy(0.4f),
+                alwaysShowLabel = true,
+                selected = currentRoute == items.route,
+                onClick = {
+                    navController.navigate(items.route) {
+                        navController.graph.startDestinationRoute?.let { route ->
+                            popUpTo(route = route) {
+                                saveState = true
+                            }
+                        }
+
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+
+                }
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+fun Navigation(navController: NavHostController) {
+
+    AnimatedNavHost(navController, startDestination = Screen.MovieListScreen.route) {
+
+        composable(
+            route = Screen.MovieListScreen.route,
+            exitTransition = {
+                when (targetState.destination.route) {
+                    "movie_detail_screen/{movieId}" ->
+                        slideOutOfContainer(
+                            AnimatedContentScope.SlideDirection.Left,
+                            animationSpec = tween(300)
+                        )
+                    else -> null
+                }
+            },
+            popEnterTransition = {
+                when (initialState.destination.route) {
+                    "movie_detail_screen/{movieId}" ->
+                        slideIntoContainer(
+                            AnimatedContentScope.SlideDirection.Right,
+                            animationSpec = tween(300)
+                        )
+                    else -> null
+                }
+            },
+        ) {
+            MovieListScreen(navController)
+        }
+
+        composable(route = Screen.FavoriteScreen.route) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Favorite Screen",
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                )
+            }
+        }
+
+        composable(
+            route = Screen.MovieDetailScreen.route + "/{movieId}",
+            enterTransition = {
+                slideIntoContainer(
+                    AnimatedContentScope.SlideDirection.Left,
+                    animationSpec = tween(300)
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentScope.SlideDirection.Right,
+                    animationSpec = tween(300)
+                )
+            }
+        ) {
+            MovieDetailScreen(navController)
+        }
+
     }
 }
 

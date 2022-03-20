@@ -75,4 +75,7 @@ dependencies {
 
     //Splash screen
     implementation 'androidx.core:core-splashscreen:1.0.0-beta01'
+
+    //Navigation animation library
+    implementation "com.google.accompanist:accompanist-navigation-animation:0.24.4-alpha"
 }

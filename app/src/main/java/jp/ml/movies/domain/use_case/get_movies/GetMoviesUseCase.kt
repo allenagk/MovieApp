@@ -25,4 +25,16 @@ class GetMoviesUseCase @Inject constructor(
             emit(Resource.Error<List<Movie>>("Couldn't reach server. Check your internet connection."))
         }
     }
+
+    operator fun invoke(): Flow<Resource<List<Movie>>> = flow {
+        try {
+            emit(Resource.Loading<List<Movie>>())
+            val movies = repository.getPopularMovies().map { it.toMovie() }
+            emit(Resource.Success<List<Movie>>(movies))
+        } catch (e: HttpException) {
+            emit(Resource.Error<List<Movie>>(e.localizedMessage ?: "An unexpected error occured"))
+        } catch (e: IOException) {
+            emit(Resource.Error<List<Movie>>("Couldn't reach server. Check your internet connection."))
+        }
+    }
 }
