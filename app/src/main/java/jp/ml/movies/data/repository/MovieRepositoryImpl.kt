@@ -10,8 +10,8 @@ class MovieRepositoryImpl @Inject constructor(
     private val api: MovieApi
 ) : MovieRepository {
 
-    override suspend fun getMovies(): List<MovieDto> {
-        return api.getMovies(query = "a", page = 1).results
+    override suspend fun searchMovie(query: String): List<MovieDto> {
+        return api.searchMovie(query = query, page = 1).results
     }
 
     override suspend fun getMovieById(movieId: String): MovieDetailDto {
