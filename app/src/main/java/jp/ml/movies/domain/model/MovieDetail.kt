@@ -26,7 +26,7 @@ data class MovieDetail(
             backDropPath = backDropPath,
             releaseDate = releaseDate,
             title = title,
-            genres = if (genres.isNullOrEmpty()) "" else genres.toString(),
+            genres = genres,
             runtime = runtime,
             tagline = tagline,
             voteAverage = voteAverage,

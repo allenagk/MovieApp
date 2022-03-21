@@ -134,7 +134,9 @@ fun MovieDetailScreen(
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
                                     movie.genres.forEach { genre ->
-                                        MovieGenre(tag = genre)
+                                        if (genre.isNotBlank()) {
+                                            MovieGenre(tag = genre)
+                                        }
                                     }
                                 }
                                 Spacer(modifier = Modifier.height(16.dp))
