@@ -48,8 +48,19 @@ class MainActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 val navController = rememberAnimatedNavController()
 
+                // Reading this attribute will cause recompositions when the bottom bar needs shown, or not.
+                // Not all routes need to show the bottom bar.
+                val bottomBarTabs = listOf(Screen.MovieListScreen, Screen.FavoriteScreen)
+                val bottomBarRoutes = bottomBarTabs.map { it.route }
+                val shouldShowBottomBar: Boolean = navController
+                    .currentBackStackEntryAsState().value?.destination?.route in bottomBarRoutes
+
                 Scaffold(
-                    bottomBar = { BottomNavigationBar(navController) }
+                    bottomBar = {
+                        if (shouldShowBottomBar) {
+                            BottomNavigationBar(navController)
+                        }
+                    }
                 ) {
                     Box(modifier = Modifier.padding(it)) {
                         Navigation(navController)
