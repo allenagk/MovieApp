@@ -4,10 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,7 +15,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.SubcomposeAsyncImage
@@ -24,7 +22,9 @@ import coil.request.ImageRequest
 import com.google.accompanist.flowlayout.FlowRow
 import jp.ml.movies.presentation.movie_detail.components.MovieGenre
 import jp.ml.movies.presentation.movie_detail.components.ShimmerAnimation
+import jp.ml.movies.presentation.movie_detail.components.TopBar
 import jp.ml.movies.presentation.movie_detail.components.UserScore
+import kotlinx.coroutines.flow.collectLatest
 
 
 @Composable
@@ -32,13 +32,36 @@ fun MovieDetailScreen(
     navController: NavController,
     viewModel: MovieDetailViewModel = hiltViewModel()
 ) {
+    val state = viewModel.state.value
+    val scaffoldState = rememberScaffoldState()
+
+    //Listen for the save or delete user event
+    LaunchedEffect(key1 = true) {
+        viewModel.eventFlow.collectLatest { event ->
+            when(event) {
+                is MovieDetailViewModel.UiEvent.ShowSnackbar -> {
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        message = event.message
+                    )
+                }
+                is MovieDetailViewModel.UiEvent.SaveFavorite -> {
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        message = event.message
+                    )
+                }
+            }
+        }
+    }
+
     Scaffold(
         topBar = {
-            TopBar(navController)
-        }
+            TopBar(navController, state, viewModel.isSavedState.value) { isSaved ->
+                state.movie?.let { viewModel.saveOrDeleteMovie(it, isSaved) }
+            }
+        },
+        scaffoldState = scaffoldState
     ) {
         Box(modifier = Modifier.padding(it)) {
-            val state = viewModel.state.value
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -61,7 +84,7 @@ fun MovieDetailScreen(
                                     Box(
                                         modifier = Modifier
                                             .fillMaxSize()
-                                            .background(Color.LightGray)
+                                            .background(Color.White)
                                     ) {
                                         ShimmerAnimation()
                                     }
@@ -223,22 +246,4 @@ fun MovieDetailScreen(
             }
         }
     }
-}
-
-@Composable
-fun TopBar(navController: NavController) {
-    TopAppBar(
-        title = { Text(text = "Movie Details", fontSize = 18.sp) },
-        navigationIcon = {
-            IconButton(onClick = { navController.popBackStack() }) {
-                Icon(Icons.Filled.ArrowBack, contentDescription = null)
-            }
-        },
-        actions = {
-            // RowScope here, so these icons will be placed horizontally
-            IconButton(onClick = { /* doSomething() */ }) {
-                Icon(Icons.Filled.Favorite, contentDescription = "Localized description")
-            }
-        }
-    )
 }

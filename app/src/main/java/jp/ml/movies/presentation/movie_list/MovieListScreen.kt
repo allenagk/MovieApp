@@ -62,7 +62,7 @@ fun MovieListScreen(
                 .background(Color.LightGray)
         ) {
 
-            if (state.movies.isEmpty() && !state.isLoading) {
+            if (state.movies.isEmpty() && !state.isLoading && state.error.isBlank()) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()

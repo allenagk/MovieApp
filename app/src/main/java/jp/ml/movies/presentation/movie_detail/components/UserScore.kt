@@ -14,14 +14,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import jp.ml.movies.presentation.ui.theme.Purple200
+import jp.ml.movies.presentation.ui.theme.highRatedColor
+import jp.ml.movies.presentation.ui.theme.lowRatedColor
 
 @Composable
 fun UserScore(
     statName: String,
     statValue: Int,
     statMaxValue: Int,
-    statColor: Color = Purple200,
+    statColor: Color = if (statValue < 70) lowRatedColor else highRatedColor,
     height: Dp = 28.dp,
     animDuration: Int = 1000,
     animDelay: Int = 0

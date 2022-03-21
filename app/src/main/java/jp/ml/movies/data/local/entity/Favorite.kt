@@ -1,15 +1,19 @@
-package jp.ml.movies.domain.model
+package jp.ml.movies.data.local.entity
 
-import jp.ml.movies.data.local.entity.Favorite
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import jp.ml.movies.domain.model.Movie
+import jp.ml.movies.domain.model.MovieDetail
 
-data class MovieDetail(
-    val movieId: Int,
+@Entity
+data class Favorite(
+    @PrimaryKey val id: Int,
     val overview: String?,
     val posterPath: String?,
     val backDropPath: String?,
     val releaseDate: String?,
     val title: String?,
-    val genres: List<String>,
+    val genres: String,
     val runtime: Int?,
     val tagline: String?,
     val voteAverage: Double?,
@@ -18,15 +22,25 @@ data class MovieDetail(
     val budget: Int?,
     val revenue: Int?,
 ) {
-    fun toFavorite(): Favorite {
-        return Favorite(
-            id = movieId,
+    fun toMovie(): Movie {
+        return Movie(
+            id = id,
+            overview = overview,
+            posterPath = posterPath,
+            title = title,
+            releaseDate = releaseDate
+        )
+    }
+
+    fun toMovieDetail(): MovieDetail {
+        return MovieDetail(
+            movieId = id,
             overview = overview,
             posterPath = posterPath,
             backDropPath = backDropPath,
             releaseDate = releaseDate,
             title = title,
-            genres = if (genres.isNullOrEmpty()) "" else genres.toString(),
+            genres = emptyList(),
             runtime = runtime,
             tagline = tagline,
             voteAverage = voteAverage,
