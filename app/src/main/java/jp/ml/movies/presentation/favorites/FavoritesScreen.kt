@@ -66,7 +66,7 @@ fun FavoriteScreen(
                     MovieListItem(
                         movie = favorite.toMovie(),
                         onItemClick = {
-                            navController.navigate(Screen.MovieDetailScreen.route + "/${favorite.id}")
+                            navController.navigate(Screen.MovieDetailScreen.route + "/${favorite.id}" + "/${true}")
                         }
                     )
                 }

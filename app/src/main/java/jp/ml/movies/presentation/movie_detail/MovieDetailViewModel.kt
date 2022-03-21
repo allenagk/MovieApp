@@ -35,12 +35,20 @@ class MovieDetailViewModel @Inject constructor(
     val isSavedState: State<Boolean> = _isSavedState
 
     init {
+        //Read movie from API if the screen transition is not from FavoriteScreen
+        //If the screen transition is from Favorites load data from local storage
+        val isLocal = savedStateHandle.get<Boolean>(Constants.PARAM_IS_LOCAL) ?: false
         savedStateHandle.get<String>(Constants.PARAM_MOVIE_ID)?.let { movieId ->
-            getMovie(movieId)
-            getSavedState(movieId.toInt())
+            if (!isLocal) {
+                getMovie(movieId)
+            }
+            getSavedState(movieId.toInt(), isLocal)
         }
     }
 
+    /**
+     * Get movies from the remote database
+     */
     private fun getMovie(movieId: String) {
         getMovieUseCase(movieId).onEach { result ->
             when (result) {
@@ -59,16 +67,25 @@ class MovieDetailViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
+    /**
+     * Save or delete the favorite movie according to the isSaved flag
+     */
     fun saveOrDeleteMovie(movie: MovieDetail, isSaved: Boolean) {
         viewModelScope.launch {
             try {
                 if (!isSaved) {
+                    //Save the movie to local database
                     getFavoritesUseCase.invoke(movie.toFavorite())
-                    getSavedState(movie.movieId)
+                    //Read favorite icon flag value
+                    getSavedState(movie.movieId, false)
+                    //Emit message to display in the snackbar
                     _eventFlow.emit(UiEvent.SaveFavorite("Saved to Favorites"))
                 } else {
+                    //Delete the movie from local database
                     getFavoritesUseCase.deleteFavorite(movie.movieId)
-                    getSavedState(movie.movieId)
+                    //Read favorite icon flag value
+                    getSavedState(movie.movieId, false)
+                    //Emit message to display in the snackbar
                     _eventFlow.emit(UiEvent.SaveFavorite("Removed From Favorites"))
                 }
             } catch (e: Exception) {
@@ -81,9 +98,18 @@ class MovieDetailViewModel @Inject constructor(
         }
     }
 
-    private fun getSavedState(movieId: Int) {
+    /**
+     * This method sets the favorite icon variable
+     * Further if data needs to be serve from local database emit local data too
+     */
+    private fun getSavedState(movieId: Int, displayLocalData: Boolean) {
         getFavoritesUseCase(movieId).onEach { result ->
             _isSavedState.value = result.isNotEmpty()
+            if (displayLocalData) {
+                if (result.isNotEmpty()) {
+                    _state.value = MovieDetailState(movie = result[0].toMovieDetail())
+                }
+            }
         }.launchIn(viewModelScope)
     }
 

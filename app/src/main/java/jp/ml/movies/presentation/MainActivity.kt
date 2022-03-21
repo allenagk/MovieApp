@@ -19,6 +19,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
@@ -129,7 +130,7 @@ fun Navigation(navController: NavHostController) {
             route = Screen.MovieListScreen.route,
             exitTransition = {
                 when (targetState.destination.route) {
-                    "movie_detail_screen/{movieId}" ->
+                    "movie_detail_screen/{movieId}/{isLocal}" ->
                         slideOutOfContainer(
                             AnimatedContentScope.SlideDirection.Left,
                             animationSpec = tween(300)
@@ -139,7 +140,7 @@ fun Navigation(navController: NavHostController) {
             },
             popEnterTransition = {
                 when (initialState.destination.route) {
-                    "movie_detail_screen/{movieId}" ->
+                    "movie_detail_screen/{movieId}/{isLocal}" ->
                         slideIntoContainer(
                             AnimatedContentScope.SlideDirection.Right,
                             animationSpec = tween(300)
@@ -151,12 +152,35 @@ fun Navigation(navController: NavHostController) {
             MovieListScreen(navController)
         }
 
-        composable(route = Screen.FavoriteScreen.route) {
+        composable(
+            route = Screen.FavoriteScreen.route,
+            exitTransition = {
+                when (targetState.destination.route) {
+                    "movie_detail_screen/{movieId}/{isLocal}" ->
+                        slideOutOfContainer(
+                            AnimatedContentScope.SlideDirection.Left,
+                            animationSpec = tween(300)
+                        )
+                    else -> null
+                }
+            },
+            popEnterTransition = {
+                when (initialState.destination.route) {
+                    "movie_detail_screen/{movieId}/{isLocal}" ->
+                        slideIntoContainer(
+                            AnimatedContentScope.SlideDirection.Right,
+                            animationSpec = tween(300)
+                        )
+                    else -> null
+                }
+            },
+        ) {
             FavoriteScreen(navController)
         }
 
         composable(
-            route = Screen.MovieDetailScreen.route + "/{movieId}",
+            route = Screen.MovieDetailScreen.route + "/{movieId}/{isLocal}",
+            arguments = listOf(navArgument("isLocal") { defaultValue = false }),
             enterTransition = {
                 slideIntoContainer(
                     AnimatedContentScope.SlideDirection.Left,
