@@ -41,6 +41,7 @@ fun FavoriteScreen(
                 .background(Color.LightGray)
         ) {
 
+            //Display empty message when no favorites found
             if (state.isEmpty()) {
                 Column(
                     modifier = Modifier
@@ -58,6 +59,7 @@ fun FavoriteScreen(
                 }
             }
 
+            //Display Favorites in grid layout
             LazyVerticalGrid(
                 modifier = Modifier.fillMaxSize(),
                 columns = GridCells.Adaptive(150.dp)
@@ -66,6 +68,7 @@ fun FavoriteScreen(
                     MovieListItem(
                         movie = favorite.toMovie(),
                         onItemClick = {
+                            //Transition to the MovieDetailScreen
                             navController.navigate(Screen.MovieDetailScreen.route + "/${favorite.id}" + "/${true}")
                         }
                     )

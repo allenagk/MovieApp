@@ -41,7 +41,7 @@ fun MovieListScreen(
                 },
                 onCloseClicked = {
                     viewModel.updateSearchWidgetState(newValue = SearchWidgetState.CLOSED)
-                    viewModel.getMovies()
+                    viewModel.getPopularMovies()
                 },
                 onSearchClicked = {
                     viewModel.searchMovie(it)
@@ -59,6 +59,7 @@ fun MovieListScreen(
                 .background(Color.LightGray)
         ) {
 
+            //Display no result message when no records found in remote DB
             if (state.movies.isEmpty() && !state.isLoading && state.error.isBlank()) {
                 Column(
                     modifier = Modifier
@@ -76,6 +77,7 @@ fun MovieListScreen(
                 }
             }
 
+            //Display the result as grid items in the screen
             LazyVerticalGrid(
                 modifier = Modifier.fillMaxSize(),
                 columns = GridCells.Adaptive(150.dp)
@@ -89,6 +91,8 @@ fun MovieListScreen(
                     )
                 }
             }
+
+            //If there is an error display message with retry button
             if (state.error.isNotBlank()) {
                 Column(
                     modifier = Modifier
@@ -103,7 +107,7 @@ fun MovieListScreen(
                         color = MaterialTheme.colors.error,
                         textAlign = TextAlign.Center,
                     )
-                    TextButton(onClick = { viewModel.getMovies() }) {
+                    TextButton(onClick = { viewModel.getPopularMovies() }) {
                         Text(
                             "RETRY",
                             fontSize = 16.sp,
@@ -111,6 +115,8 @@ fun MovieListScreen(
                     }
                 }
             }
+
+            //Display progress indicator while reading the api
             if (state.isLoading) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }

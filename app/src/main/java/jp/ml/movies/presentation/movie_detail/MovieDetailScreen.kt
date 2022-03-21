@@ -39,12 +39,12 @@ fun MovieDetailScreen(
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
-                is MovieDetailViewModel.UiEvent.ShowSnackbar -> {
+                is MovieDetailViewModel.UiEvent.ShowSnackbarOnError -> {
                     scaffoldState.snackbarHostState.showSnackbar(
                         message = event.message
                     )
                 }
-                is MovieDetailViewModel.UiEvent.SaveFavorite -> {
+                is MovieDetailViewModel.UiEvent.ShowSnackbarOnSaveSuccess -> {
                     scaffoldState.snackbarHostState.showSnackbar(
                         message = event.message
                     )
@@ -67,6 +67,8 @@ fun MovieDetailScreen(
                     .fillMaxSize()
                     .background(Color.White)
             ) {
+
+                //Display Movie Details
                 state.movie?.let { movie ->
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
@@ -123,6 +125,8 @@ fun MovieDetailScreen(
                                         style = MaterialTheme.typography.body2
                                     )
                                 }
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Divider()
                                 Spacer(modifier = Modifier.height(16.dp))
                                 Text(
                                     text = "Genres",
@@ -231,6 +235,8 @@ fun MovieDetailScreen(
                         }
                     }
                 }
+
+                //Display error if there is any
                 if (state.error.isNotBlank()) {
                     Text(
                         text = state.error,
@@ -242,6 +248,8 @@ fun MovieDetailScreen(
                             .align(Alignment.Center)
                     )
                 }
+
+                //Display progress indicator while reading the api
                 if (state.isLoading) {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }

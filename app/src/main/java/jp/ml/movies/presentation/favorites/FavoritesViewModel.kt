@@ -23,6 +23,9 @@ class FavoritesViewModel @Inject constructor(
         getFavorites()
     }
 
+    /**
+     * Get favorites from local database
+     */
     private fun getFavorites() {
         getFavoritesUseCase.getFavorites().onEach { result ->
             _state.removeAll { true }

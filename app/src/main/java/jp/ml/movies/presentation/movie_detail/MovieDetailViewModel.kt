@@ -25,12 +25,15 @@ class MovieDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
+    //MovieDetail data states
     private val _state = mutableStateOf(MovieDetailState())
     val state: State<MovieDetailState> = _state
 
+    //User favorite button event states
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
+    //Favorite button enable/disable states
     private val _isSavedState = mutableStateOf(false)
     val isSavedState: State<Boolean> = _isSavedState
 
@@ -79,18 +82,18 @@ class MovieDetailViewModel @Inject constructor(
                     //Read favorite icon flag value
                     getSavedState(movie.movieId, false)
                     //Emit message to display in the snackbar
-                    _eventFlow.emit(UiEvent.SaveFavorite("Saved to Favorites"))
+                    _eventFlow.emit(UiEvent.ShowSnackbarOnSaveSuccess("Saved to Favorites"))
                 } else {
                     //Delete the movie from local database
                     getFavoritesUseCase.deleteFavorite(movie.movieId)
                     //Read favorite icon flag value
                     getSavedState(movie.movieId, false)
                     //Emit message to display in the snackbar
-                    _eventFlow.emit(UiEvent.SaveFavorite("Removed From Favorites"))
+                    _eventFlow.emit(UiEvent.ShowSnackbarOnSaveSuccess("Removed From Favorites"))
                 }
             } catch (e: Exception) {
                 _eventFlow.emit(
-                    UiEvent.ShowSnackbar(
+                    UiEvent.ShowSnackbarOnError(
                         message = e.message ?: "Couldn't save note"
                     )
                 )
@@ -114,7 +117,7 @@ class MovieDetailViewModel @Inject constructor(
     }
 
     sealed class UiEvent {
-        data class ShowSnackbar(val message: String) : UiEvent()
-        data class SaveFavorite(val message: String) : UiEvent()
+        data class ShowSnackbarOnError(val message: String) : UiEvent()
+        data class ShowSnackbarOnSaveSuccess(val message: String) : UiEvent()
     }
 }

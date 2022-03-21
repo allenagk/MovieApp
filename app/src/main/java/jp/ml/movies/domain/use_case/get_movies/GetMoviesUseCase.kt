@@ -14,6 +14,9 @@ class GetMoviesUseCase @Inject constructor(
     private val repository: MovieRepository
 ) {
 
+    /**
+     * Search movie use case
+     */
     operator fun invoke(query: String): Flow<Resource<List<Movie>>> = flow {
         try {
             emit(Resource.Loading<List<Movie>>())
@@ -26,6 +29,9 @@ class GetMoviesUseCase @Inject constructor(
         }
     }
 
+    /**
+     * Popular movies use case
+     */
     operator fun invoke(): Flow<Resource<List<Movie>>> = flow {
         try {
             emit(Resource.Loading<List<Movie>>())

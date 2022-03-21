@@ -40,6 +40,7 @@ fun MovieListItem(
             elevation = 5.dp
         ) {
             Box(modifier = Modifier.height(250.dp)) {
+                //Display Image
                 SubcomposeAsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
                         .data("https://www.themoviedb.org/t/p/w1280${movie.posterPath}")
@@ -53,6 +54,7 @@ fun MovieListItem(
                     contentDescription = "poster image",
                     contentScale = ContentScale.Crop,
                 )
+                //Add gradient to improve visibility of the Movie title and released date
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -65,6 +67,7 @@ fun MovieListItem(
                             )
                         )
                 )
+                //Display movie title and the released date
                 Box(
                     modifier = Modifier
                         .fillMaxSize()

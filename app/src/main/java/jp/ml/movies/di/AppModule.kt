@@ -19,6 +19,9 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
+    /**
+     * Provides MovieApi instance
+     */
     @Provides
     @Singleton
     fun provideMovieApi(): MovieApi {
@@ -29,6 +32,9 @@ object AppModule {
             .create(MovieApi::class.java)
     }
 
+    /**
+     * Provides MoviesDatabase instance
+     */
     @Provides
     @Singleton
     fun provideMoviesDatabase(app: Application): MovieDatabase {
@@ -39,6 +45,9 @@ object AppModule {
         ).build()
     }
 
+    /**
+     * Provides MovieRepository instance
+     */
     @Provides
     @Singleton
     fun provideMovieRepository(api: MovieApi, db: MovieDatabase): MovieRepository {

@@ -18,6 +18,7 @@ class MovieListViewModel @Inject constructor(
     private val getMoviesUseCase: GetMoviesUseCase
 ) : ViewModel() {
 
+    //States to handle appBar search/default behavior
     private val _searchWidgetState: MutableState<SearchWidgetState> =
         mutableStateOf(value = SearchWidgetState.CLOSED)
     val searchWidgetState: State<SearchWidgetState> = _searchWidgetState
@@ -34,14 +35,18 @@ class MovieListViewModel @Inject constructor(
         _searchTextState.value = newValue
     }
 
+    //Movie items data state
     private val _state = mutableStateOf(MovieListState())
     val state: State<MovieListState> = _state
 
     init {
-        getMovies()
+        getPopularMovies()
     }
 
 
+    /**
+     * API call to query for specific movie
+     */
     fun searchMovie(query: String) {
         getMoviesUseCase(query).onEach { result ->
             when (result) {
@@ -60,7 +65,10 @@ class MovieListViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun getMovies() {
+    /**
+     * API call for the popular movies
+     */
+    fun getPopularMovies() {
         getMoviesUseCase().onEach { result ->
             when (result) {
                 is Resource.Success -> {
