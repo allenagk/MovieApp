@@ -19,6 +19,7 @@ import androidx.navigation.NavController
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.google.accompanist.flowlayout.FlowRow
+import jp.ml.movies.common.Utils
 import jp.ml.movies.presentation.movie_detail.components.MovieGenre
 import jp.ml.movies.presentation.movie_detail.components.ShimmerAnimation
 import jp.ml.movies.presentation.movie_detail.components.TopBar
@@ -149,7 +150,7 @@ fun MovieDetailScreen(
                                         style = MaterialTheme.typography.h6
                                     )
                                     Text(
-                                        text = "${movie.runtime}",
+                                        text = Utils.getFormattedDuration(movie.runtime),
                                         style = MaterialTheme.typography.subtitle1,
                                     )
                                 }
@@ -193,7 +194,7 @@ fun MovieDetailScreen(
                                         style = MaterialTheme.typography.h6
                                     )
                                     Text(
-                                        text = "${movie.originalLanguage}",
+                                        text = Utils.getDisplayLanguage(movie.originalLanguage),
                                         style = MaterialTheme.typography.subtitle1,
                                     )
                                 }
@@ -207,7 +208,7 @@ fun MovieDetailScreen(
                                         style = MaterialTheme.typography.h6
                                     )
                                     Text(
-                                        text = "${movie.budget}",
+                                        text = Utils.getFormattedCurrency(movie.budget),
                                         style = MaterialTheme.typography.subtitle1,
                                     )
                                 }
@@ -221,7 +222,7 @@ fun MovieDetailScreen(
                                         style = MaterialTheme.typography.h6
                                     )
                                     Text(
-                                        text = "${movie.revenue}",
+                                        text = Utils.getFormattedCurrency(movie.revenue),
                                         style = MaterialTheme.typography.subtitle1,
                                     )
                                 }
